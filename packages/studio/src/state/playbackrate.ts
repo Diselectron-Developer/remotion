@@ -18,8 +18,11 @@ export const loadPlaybackRate = () => {
 		return 1;
 	}
 
-	// Only restore rates the Studio can select, so a stale or corrupted value
-	// (e.g. 0 or NaN) cannot stall playback after a reload.
+	// Reject zero and out-of-range values so corrupted storage cannot stall playback.
 	const playbackRate = Number(item);
-	return commonPlaybackRates.includes(playbackRate) ? playbackRate : 1;
+	return Number.isFinite(playbackRate) &&
+		playbackRate !== 0 &&
+		Math.abs(playbackRate) <= 4
+		? playbackRate
+		: 1;
 };
